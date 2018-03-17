@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -6,7 +6,7 @@ import IconButton from 'material-ui/IconButton';
 import NavigationMenuIcon from 'material-ui/svg-icons/navigation/menu';
 import NavigationOptions from './NavigationOptions';
 
-export class NavigationBar extends React.Component {
+class NavigationBar extends Component {
 
   constructor(props) {
     super(props);

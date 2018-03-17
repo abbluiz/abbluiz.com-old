@@ -17,7 +17,7 @@ const styles = {
   }
 };
 
-export default class NavigationTabs extends React.Component {
+class NavigationTabs extends React.Component {
 
   constructor(props) {
 
@@ -65,3 +65,5 @@ export default class NavigationTabs extends React.Component {
   }
 
 }
+
+export default NavigationTabs;
