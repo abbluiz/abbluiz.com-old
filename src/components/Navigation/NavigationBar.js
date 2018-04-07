@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { withStyles } from 'material-ui/styles';
-import {AppBar, Toolbar, Typography} from "material-ui";
+import {AppBar, Button, Snackbar, Toolbar} from "material-ui";
 
 
-const styles = {
+const styles = theme => ({
 
   root: {
 
@@ -13,25 +13,183 @@ const styles = {
 
   },
 
-};
+  button: {
 
-function NavigationBar(props) {
+    margin: 0,
 
-  const { classes } = props;
+  },
 
-  return (
+});
 
-    <div className={classes.root}>
-      <AppBar position="static" color="default">
-        <Toolbar>
-          <Typography variant="title" color="inherit">
-            LABB
-          </Typography>
-        </Toolbar>
-      </AppBar>
-    </div>
+class NavigationBar extends Component {
 
-  );
+  constructor(props) {
+
+    super(props);
+
+    this.state = {
+
+      openLuiz: false,
+      openAntonio: false,
+      openBueno: false,
+      openBarbosa: false,
+      vertical: null,
+      horizontal: null,
+
+    };
+
+    this.handleClickLuiz = this.handleClickLuiz.bind(this);
+    this.handleCloseLuiz = this.handleCloseLuiz.bind(this);
+    this.handleClickAntonio = this.handleClickAntonio.bind(this);
+    this.handleCloseAntonio = this.handleCloseAntonio.bind(this);
+    this.handleClickBueno = this.handleClickBueno.bind(this);
+    this.handleCloseBueno = this.handleCloseBueno.bind(this);
+    this.handleClickBarbosa = this.handleClickBarbosa.bind(this);
+    this.handleCloseBarbosa = this.handleCloseBarbosa.bind(this);
+
+  }
+
+  handleClickLuiz = state => () => {
+    this.setState({ openLuiz: true, ...state});
+  };
+
+  handleCloseLuiz = () => {
+    this.setState({ openLuiz: false });
+  };
+
+  handleClickAntonio = state => () => {
+    this.setState({ openAntonio: true, ...state });
+  };
+
+  handleCloseAntonio = () => {
+    this.setState({ openAntonio: false });
+  };
+
+  handleClickBueno = state => () => {
+    this.setState({ openBueno: true, ...state });
+  };
+
+  handleCloseBueno = () => {
+    this.setState({ openBueno: false });
+  };
+
+  handleClickBarbosa = state => () => {
+    this.setState({ openBarbosa: true, ...state });
+  };
+
+  handleCloseBarbosa = () => {
+    this.setState({ openBarbosa: false });
+  };
+
+
+  render() {
+
+    const { classes } = this.props;
+    const { vertical, horizontal, openLuiz, openAntonio, openBueno, openBarbosa } = this.state;
+
+    return (
+
+
+        <div className={classes.root}>
+          <AppBar position="static" color="default">
+
+            <Toolbar>
+
+              <Button
+                size="small"
+                color="secondary"
+                className={classes.button}
+                onClick={this.handleClickLuiz({ vertical: 'bottom', horizontal: 'left' })}>
+
+                L
+              </Button>
+
+              <Button
+                size="small"
+                color="secondary"
+                className={classes.button}
+                onClick={this.handleClickAntonio({ vertical: 'bottom', horizontal: 'left' })}>
+
+                A
+              </Button>
+
+              <Button
+                size="small"
+                color="secondary"
+                className={classes.button}
+                onClick={this.handleClickBueno({ vertical: 'bottom', horizontal: 'left' })}>
+
+                B
+              </Button>
+
+              <Button
+                size="small"
+                color="secondary"
+                className={classes.button}
+                onClick={this.handleClickBarbosa({ vertical: 'bottom', horizontal: 'left' })}>
+
+                B
+              </Button>
+
+            </Toolbar>
+
+          </AppBar>
+
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={openLuiz}
+            autoHideDuration={2500}
+            onClose={this.handleCloseLuiz}
+            SnackbarContentProps={{
+              'aria-describedby': 'luiz-message',
+            }}
+            message={<span id="luiz-message">Luiz</span>}
+            className={classes.snackbar}
+          />
+
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={openAntonio}
+            autoHideDuration={2500}
+            onClose={this.handleCloseAntonio}
+            SnackbarContentProps={{
+              'aria-describedby': 'antonio-message',
+            }}
+            message={<span id="antonio-message">Antonio</span>}
+            className={classes.snackbar}
+          />
+
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={openBueno}
+            autoHideDuration={2500}
+            onClose={this.handleCloseBueno}
+            SnackbarContentProps={{
+              'aria-describedby': 'bueno-message',
+            }}
+            message={<span id="bueno-message">Bueno</span>}
+            className={classes.snackbar}
+          />
+
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={openBarbosa}
+            autoHideDuration={2500}
+            onClose={this.handleCloseBarbosa}
+            SnackbarContentProps={{
+              'aria-describedby': 'barbosa-message',
+            }}
+            message={<span id="barbosa-message">Barbosa</span>}
+            className={classes.snackbar}
+          />
+
+        </div>
+
+    );
+
+  };
+
+
 }
 
 NavigationBar.propTypes = {
