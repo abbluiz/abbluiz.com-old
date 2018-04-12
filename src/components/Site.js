@@ -2,7 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route } from 'react-router-dom';
 
-import {AppBar, Button, Snackbar, Toolbar} from "material-ui";
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import Toolbar from 'material-ui/Toolbar';
+import Snackbar from 'material-ui/Snackbar';
+import List from 'material-ui/List';
+import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
+import Hidden from 'material-ui/Hidden';
+import Divider from 'material-ui/Divider';
+import MenuIcon from 'material-ui-icons/Menu';
+
 import { withStyles } from 'material-ui/styles';
 
 import Home from "./Home";
@@ -12,11 +22,55 @@ import About from "./About/About";
 import Admin from "./Admin/Admin";
 import Whoops404 from "./Whoops404";
 
+const drawerWidth = 240;
+
 const styles = theme => ({
 
   root: {
 
     flexGrow: 1,
+    zIndex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'flex',
+    width: '100%',
+
+  },
+
+  appBar: {
+
+    position: 'absolute',
+    marginLeft: drawerWidth,
+    [theme.breakpoints.up('md')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
+
+  },
+
+  navIconHide: {
+
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+
+  },
+
+  toolbar: theme.mixins.toolbar,
+
+  drawerPaper: {
+
+    width: drawerWidth,
+    [theme.breakpoints.up('md')]: {
+      position: 'relative',
+    },
+
+  },
+
+  content: {
+
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing.unit * 3,
 
   },
 
@@ -36,6 +90,8 @@ class App extends Component {
 
     this.state = {
 
+      mobileOpen: false,
+
       openLuiz: false,
       openAntonio: false,
       openBueno: false,
@@ -53,8 +109,13 @@ class App extends Component {
     this.handleCloseBueno = this.handleCloseBueno.bind(this);
     this.handleClickBarbosa = this.handleClickBarbosa.bind(this);
     this.handleCloseBarbosa = this.handleCloseBarbosa.bind(this);
+    this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
 
   }
+
+  handleDrawerToggle = () => {
+    this.setState({ mobileOpen: !this.state.mobileOpen });
+  };
 
   handleClickLuiz = state => () => {
     this.setState({ openLuiz: true, ...state});
@@ -90,117 +151,184 @@ class App extends Component {
 
   render() {
 
-    const { classes } = this.props;
+    const { classes, theme } = this.props;
     const { vertical, horizontal, openLuiz, openAntonio, openBueno, openBarbosa } = this.state;
+
+    const drawer = (
+      <div>
+        <div className={classes.toolbar} />
+        <Divider />
+        <List>Asd</List>
+        <Divider />
+        <List>Asd</List>
+      </div>
+    );
+
+    const labbButtons = (
+
+      <div>
+        <Button
+          size="small"
+          color="secondary"
+          className={classes.button}
+          onClick={this.handleClickLuiz({ vertical: 'bottom', horizontal: 'left' })}>
+
+          L
+        </Button>
+
+        <Button
+          size="small"
+          color="secondary"
+          className={classes.button}
+          onClick={this.handleClickAntonio({ vertical: 'bottom', horizontal: 'left' })}>
+
+          A
+        </Button>
+
+        <Button
+          size="small"
+          color="secondary"
+          className={classes.button}
+          onClick={this.handleClickBueno({ vertical: 'bottom', horizontal: 'left' })}>
+
+          B
+        </Button>
+
+        <Button
+          size="small"
+          color="secondary"
+          className={classes.button}
+          onClick={this.handleClickBarbosa({ vertical: 'bottom', horizontal: 'left' })}>
+
+          B
+        </Button>
+      </div>
+
+    );
 
     return (
 
-      <div>
+      <div className={classes.root}>
 
-        <div className={classes.root}>
+        <AppBar className={classes.appBar}>
 
-          <AppBar position="static" color="default">
+          <Toolbar>
 
-            <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={this.handleDrawerToggle}
+              className={classes.navIconHide}
+            >
 
-              <Button
-                size="small"
-                color="secondary"
-                className={classes.button}
-                onClick={this.handleClickLuiz({ vertical: 'bottom', horizontal: 'left' })}>
+              <MenuIcon />
 
-                L
-              </Button>
+            </IconButton>
 
-              <Button
-                size="small"
-                color="secondary"
-                className={classes.button}
-                onClick={this.handleClickAntonio({ vertical: 'bottom', horizontal: 'left' })}>
+            {labbButtons}
 
-                A
-              </Button>
+          </Toolbar>
 
-              <Button
-                size="small"
-                color="secondary"
-                className={classes.button}
-                onClick={this.handleClickBueno({ vertical: 'bottom', horizontal: 'left' })}>
+        </AppBar>
 
-                B
-              </Button>
+        <Hidden mdUp>
 
-              <Button
-                size="small"
-                color="secondary"
-                className={classes.button}
-                onClick={this.handleClickBarbosa({ vertical: 'bottom', horizontal: 'left' })}>
-
-                B
-              </Button>
-
-            </Toolbar>
-
-          </AppBar>
-
-          <Snackbar
-            anchorOrigin={{ vertical, horizontal }}
-            open={openLuiz}
-            autoHideDuration={2500}
-            onClose={this.handleCloseLuiz}
-            SnackbarContentProps={{
-              'aria-describedby': 'luiz-message',
+          <Drawer
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={this.state.mobileOpen}
+            onClose={this.handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
             }}
-            message={<span id="luiz-message">Luiz</span>}
-            className={classes.snackbar}
-          />
-
-          <Snackbar
-            anchorOrigin={{ vertical, horizontal }}
-            open={openAntonio}
-            autoHideDuration={2500}
-            onClose={this.handleCloseAntonio}
-            SnackbarContentProps={{
-              'aria-describedby': 'antonio-message',
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
             }}
-            message={<span id="antonio-message">Antonio</span>}
-            className={classes.snackbar}
-          />
+          >
 
-          <Snackbar
-            anchorOrigin={{ vertical, horizontal }}
-            open={openBueno}
-            autoHideDuration={2500}
-            onClose={this.handleCloseBueno}
-            SnackbarContentProps={{
-              'aria-describedby': 'bueno-message',
+            {drawer}
+
+          </Drawer>
+
+        </Hidden>
+
+        <Hidden smDown implementation="css">
+
+          <Drawer
+            variant="permanent"
+            open
+            classes={{
+              paper: classes.drawerPaper,
             }}
-            message={<span id="bueno-message">Bueno</span>}
-            className={classes.snackbar}
-          />
+          >
 
-          <Snackbar
-            anchorOrigin={{ vertical, horizontal }}
-            open={openBarbosa}
-            autoHideDuration={2500}
-            onClose={this.handleCloseBarbosa}
-            SnackbarContentProps={{
-              'aria-describedby': 'barbosa-message',
-            }}
-            message={<span id="barbosa-message">Barbosa</span>}
-            className={classes.snackbar}
-          />
+            {drawer}
 
-        </div>
+          </Drawer>
 
-        <Switch>
-          <Route exact={true} path="/" component={Home} />
-          <Route path="/activity" component={LastActivity} />
-          <Route path="/portfolio" component={Portfolio} />
-          <Route path="/about" component={About} />
-          <Route path="/admin" component={Admin} />
-          <Route component={Whoops404} />
-        </Switch>
+        </Hidden>
+
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={openLuiz}
+          autoHideDuration={2500}
+          onClose={this.handleCloseLuiz}
+          SnackbarContentProps={{
+            'aria-describedby': 'luiz-message',
+          }}
+          message={<span id="luiz-message">Luiz</span>}
+          className={classes.snackbar}
+        />
+
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={openAntonio}
+          autoHideDuration={2500}
+          onClose={this.handleCloseAntonio}
+          SnackbarContentProps={{
+            'aria-describedby': 'antonio-message',
+          }}
+          message={<span id="antonio-message">Antonio</span>}
+          className={classes.snackbar}
+        />
+
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={openBueno}
+          autoHideDuration={2500}
+          onClose={this.handleCloseBueno}
+          SnackbarContentProps={{
+            'aria-describedby': 'bueno-message',
+          }}
+          message={<span id="bueno-message">Bueno</span>}
+          className={classes.snackbar}
+        />
+
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={openBarbosa}
+          autoHideDuration={2500}
+          onClose={this.handleCloseBarbosa}
+          SnackbarContentProps={{
+            'aria-describedby': 'barbosa-message',
+          }}
+          message={<span id="barbosa-message">Barbosa</span>}
+          className={classes.snackbar}
+        />
+
+
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+
+          <Switch>
+            <Route exact={true} path="/" component={Home} />
+            <Route path="/activity" component={LastActivity} />
+            <Route path="/portfolio" component={Portfolio} />
+            <Route path="/about" component={About} />
+            <Route path="/admin" component={Admin} />
+            <Route component={Whoops404} />
+          </Switch>
+        </main>
 
       </div>
 
@@ -213,7 +341,8 @@ class App extends Component {
 App.propTypes = {
 
   classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
 
 };
 
-export default withStyles(styles)(App);
+export default withStyles(styles, { withTheme: true })(App);

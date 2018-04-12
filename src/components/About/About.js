@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Typography from 'material-ui/Typography';
+
 const About = () => (
 
-  <div>
-    <h2>About</h2>
-  </div>
+  <Typography noWrap>{'About'}</Typography>
 
 );
 

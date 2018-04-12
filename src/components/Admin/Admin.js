@@ -1,10 +1,9 @@
 import React from 'react';
+import Typography from 'material-ui/Typography';
 
 const Admin = () => (
 
-  <div>
-    <h2>Admin</h2>
-  </div>
+  <Typography noWrap>{'Admin'}</Typography>
 
 );
 

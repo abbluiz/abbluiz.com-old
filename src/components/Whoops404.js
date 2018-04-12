@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Typography from 'material-ui/Typography';
+
 const Whoops404 = () => (
 
-  <div>
-    <h2>404 Not Found</h2>
-  </div>
+  <Typography noWrap>{'404 Not Found!'}</Typography>
 
 );
 

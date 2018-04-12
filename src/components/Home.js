@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Typography from 'material-ui/Typography';
+
 const Home = () => (
 
-  <div>
-    <h2>Home</h2>
-  </div>
+  <Typography noWrap>{'Home'}</Typography>
 
 );
 

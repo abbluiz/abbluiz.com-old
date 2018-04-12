@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Typography from 'material-ui/Typography';
+
 const LastActivity = () => (
 
-  <div>
-    <h2>LastActivity</h2>
-  </div>
+  <Typography noWrap>{'LastActivity'}</Typography>
 
 );
 

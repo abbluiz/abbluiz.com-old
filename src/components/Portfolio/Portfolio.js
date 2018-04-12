@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Typography from 'material-ui/Typography';
+
 const Portfolio = () => (
 
-  <div>
-    <h2>Portfolio</h2>
-  </div>
+  <Typography noWrap>{'Portfolio'}</Typography>
 
 );
 
