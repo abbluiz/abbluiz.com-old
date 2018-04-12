@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, NavLink} from 'react-router-dom';
 
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import Toolbar from 'material-ui/Toolbar';
 import Snackbar from 'material-ui/Snackbar';
 import List from 'material-ui/List';
+import ListItem from 'material-ui/List/ListItem';
+import ListItemIcon from 'material-ui/List/ListItemIcon';
+import ListItemText from 'material-ui/List/ListItemText';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Hidden from 'material-ui/Hidden';
 import Divider from 'material-ui/Divider';
+
 import MenuIcon from 'material-ui-icons/Menu';
+import HomeIcon from 'material-ui-icons/Home';
+import CommentIcon from 'material-ui-icons/Comment';
+import CollectionsBookmarkIcon from 'material-ui-icons/CollectionsBookmark';
+import AccountBoxIcon from 'material-ui-icons/AccountBox';
+import SettingsIcon from 'material-ui-icons/Settings';
 
 import { withStyles } from 'material-ui/styles';
 
@@ -34,6 +43,7 @@ const styles = theme => ({
     position: 'relative',
     display: 'flex',
     width: '100%',
+    height: '100%',
 
   },
 
@@ -81,6 +91,10 @@ const styles = theme => ({
   },
 
 });
+
+const navLinkStyle = {
+  textDecoration: 'none'
+};
 
 class App extends Component {
 
@@ -155,13 +169,79 @@ class App extends Component {
     const { vertical, horizontal, openLuiz, openAntonio, openBueno, openBarbosa } = this.state;
 
     const drawer = (
+
       <div>
+
         <div className={classes.toolbar} />
+
         <Divider />
-        <List>Asd</List>
+
+        <List component="nav">
+
+          <NavLink style={navLinkStyle} to="/">
+            <ListItem button>
+
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+
+              <ListItemText primary="Home" />
+
+            </ListItem>
+          </NavLink>
+
+          <NavLink style={navLinkStyle} to="/activity">
+            <ListItem button>
+
+              <ListItemIcon>
+                <CommentIcon />
+              </ListItemIcon>
+
+              <ListItemText primary="Activity" />
+
+            </ListItem>
+          </NavLink>
+
+          <NavLink style={navLinkStyle} to="/portfolio">
+            <ListItem button>
+
+              <ListItemIcon>
+                <CollectionsBookmarkIcon />
+              </ListItemIcon>
+
+              <ListItemText primary="Portfolio" />
+
+            </ListItem>
+          </NavLink>
+
+          <NavLink style={navLinkStyle} to="/about">
+            <ListItem button>
+
+              <ListItemIcon>
+                <AccountBoxIcon />
+              </ListItemIcon>
+
+              <ListItemText primary="About Me" />
+
+            </ListItem>
+          </NavLink>
+
+          <ListItem button>
+
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+
+            <ListItemText primary="Settings" />
+
+          </ListItem>
+
+        </List>
+
         <Divider />
-        <List>Asd</List>
+
       </div>
+
     );
 
     const labbButtons = (
