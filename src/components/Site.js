@@ -24,7 +24,7 @@ import SettingsIcon from 'material-ui-icons/Settings';
 
 import { withStyles } from 'material-ui/styles';
 
-import Home from "./Home";
+import Home from "./Home/Home";
 import LastActivity from "./Activity/LastActivity";
 import Portfolio from "./Portfolio/Portfolio";
 import About from "./About/About";
