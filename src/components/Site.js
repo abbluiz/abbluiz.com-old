@@ -9,7 +9,10 @@ import Drawer from 'material-ui/Drawer';
 import SwipeableDrawer from 'material-ui/SwipeableDrawer';
 import Toolbar from 'material-ui/Toolbar';
 import Snackbar from 'material-ui/Snackbar';
-import List from 'material-ui/List';
+import Menu from 'material-ui/Menu/Menu';
+import MenuItem from 'material-ui/Menu/MenuItem';
+import MenuList from 'material-ui/Menu/MenuList';
+import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import ListItemIcon from 'material-ui/List/ListItemIcon';
 import ListItemText from 'material-ui/List/ListItemText';
@@ -21,7 +24,6 @@ import Typography from 'material-ui/Typography';
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
 
@@ -173,12 +175,30 @@ const styles = theme => ({
 
   selected: {
 
-    backgroundColor: '#303030',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    "&:hover": {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    },
+
+  },
+
+  languageOptions: {
+
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
 
   },
 
 
 });
+
+const languageOptions = [
+  'Português (Brasil)',
+  'English (Canada)',
+  'English (United States)',
+  'Auto',
+];
 
 function appBarTitle(props) {
 
@@ -210,6 +230,9 @@ class App extends Component {
       vertical: null,
       horizontal: null,
 
+      anchorEl: null,
+      selectedIndex: 3,
+
     };
 
     this.handleDesktopDrawerOpen = this.handleDesktopDrawerOpen.bind(this);
@@ -227,6 +250,9 @@ class App extends Component {
     this.handleCloseBarbosa = this.handleCloseBarbosa.bind(this);
     this.handleSettingsOpen = this.handleSettingsOpen.bind(this);
     this.handleSettingsClose = this.handleSettingsClose.bind(this);
+    this.handleClickLangListItem = this.handleClickLangListItem.bind(this);
+    this.handleClickLangMenuItem = this.handleClickLangMenuItem.bind(this);
+    this.handleLangClose = this.handleLangClose.bind(this);
 
   }
 
@@ -301,6 +327,18 @@ class App extends Component {
     this.setState({ settingsOpen: false });
   };
 
+  handleClickLangListItem = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClickLangMenuItem = (event, index) => {
+    this.setState({ selectedIndex: index, anchorEl: null });
+  };
+
+  handleLangClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
   render() {
 
     const { classes, theme } = this.props;
@@ -312,6 +350,7 @@ class App extends Component {
       openAntonio,
       openBueno,
       openBarbosa,
+      anchorEl,
     } = this.state;
 
     const pathname = this.props.location.pathname;
@@ -324,13 +363,14 @@ class App extends Component {
 
         <Divider />
 
-        <List component="nav">
+        <MenuList>
 
-          <ListItem button
-                    component={NavLink}
-                    exact to="/"
-                    activeClassName={classes.selected}
-                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerClose() }}>
+          <ListItem
+            button
+            component={NavLink}
+            exact to="/"
+            activeClassName={classes.selected}
+            onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerClose() }}>
 
             <ListItemIcon>
               <HomeIcon />
@@ -340,11 +380,12 @@ class App extends Component {
 
           </ListItem>
 
-          <ListItem button
-                    component={NavLink}
-                    to="/activity"
-                    activeClassName={classes.selected}
-                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
+          <ListItem
+            button
+            component={NavLink}
+            to="/activity"
+            activeClassName={classes.selected}
+            onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
 
             <ListItemIcon>
               <CommentIcon />
@@ -355,11 +396,12 @@ class App extends Component {
           </ListItem>
 
 
-          <ListItem button
-                    component={NavLink}
-                    to="/portfolio"
-                    activeClassName={classes.selected}
-                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
+          <ListItem
+            button
+            component={NavLink}
+            to="/portfolio"
+            activeClassName={classes.selected}
+            onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
 
             <ListItemIcon>
               <CollectionsBookmarkIcon />
@@ -369,13 +411,12 @@ class App extends Component {
 
           </ListItem>
 
-
-
-          <ListItem button
-                    component={NavLink}
-                    to="/about"
-                    activeClassName={classes.selected}
-                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
+          <ListItem
+            button
+            component={NavLink}
+            to="/about"
+            activeClassName={classes.selected}
+            onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
 
             <ListItemIcon>
               <AccountBoxIcon />
@@ -386,8 +427,9 @@ class App extends Component {
           </ListItem>
 
 
-          <ListItem button
-                    onClick={this.handleSettingsOpen}>
+          <ListItem
+            button
+            onClick={this.handleSettingsOpen}>
 
             <ListItemIcon>
               <SettingsIcon />
@@ -397,7 +439,7 @@ class App extends Component {
 
           </ListItem>
 
-        </List>
+        </MenuList>
 
         <Divider />
 
@@ -569,25 +611,62 @@ class App extends Component {
           aria-labelledby="responsive-dialog-settings-title"
         >
 
-          <DialogTitle id="responsive-dialog-settings-title">{"Choose Language"}</DialogTitle>
+          <DialogTitle id="responsive-dialog-settings-title">{"Settings"}</DialogTitle>
 
           <DialogContent>
 
-            <DialogContentText>
-              Let Google help apps determine location. This means sending anonymous location data to
-              Google, even when no apps are running.
-            </DialogContentText>
+            <div className={classes.languageOptions}>
+
+              <List component="nav">
+
+                <ListItem
+                  button
+                  aria-haspopup="true"
+                  aria-controls="lock-menu"
+                  aria-label="Language"
+                  onClick={this.handleClickLangListItem}
+                >
+
+                  <ListItemText
+                    primary="Language"
+                    secondary={languageOptions[this.state.selectedIndex]}
+                  />
+
+                </ListItem>
+
+              </List>
+
+              <Menu
+                id="lock-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={this.handleLangClose}
+              >
+
+                {languageOptions.map((langOption, index) => (
+
+                  <MenuItem
+                    key={langOption}
+                    selected={index === this.state.selectedIndex}
+                    onClick={event => this.handleClickLangMenuItem(event, index)}
+                  >
+
+                    {langOption}
+
+                  </MenuItem>
+
+                ))}
+
+              </Menu>
+
+            </div>
 
           </DialogContent>
 
           <DialogActions>
 
-            <Button onClick={this.handleSettingsClose} color="secondary">
-              Disagree
-            </Button>
-
             <Button onClick={this.handleSettingsClose} color="secondary" autoFocus>
-              Agree
+              Save
             </Button>
 
           </DialogActions>

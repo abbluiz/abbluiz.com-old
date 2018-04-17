@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route} from 'react-router-dom';
 
 import {createMuiTheme, MuiThemeProvider} from "material-ui";
 
@@ -40,14 +40,7 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <BrowserRouter>
-      <Switch>
-        <Route exact={true} path="/" component={App} />
-        <Route path="/activity" component={App} />
-        <Route path="/portfolio" component={App} />
-        <Route path="/about" component={App} />
-        <Route path="/admin" component={App} />
-        <Route component={App} />
-      </Switch>
+      <Route component={App} />
     </BrowserRouter>
   </MuiThemeProvider>, document.getElementById('root'));
 registerServiceWorker();
