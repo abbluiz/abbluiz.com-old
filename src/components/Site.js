@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, NavLink} from 'react-router-dom';
+import classNames from 'classnames';
+import compose from 'recompose/compose';
 
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
+import SwipeableDrawer from 'material-ui/SwipeableDrawer';
 import Toolbar from 'material-ui/Toolbar';
 import Snackbar from 'material-ui/Snackbar';
 import List from 'material-ui/List';
@@ -14,6 +17,13 @@ import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Hidden from 'material-ui/Hidden';
 import Divider from 'material-ui/Divider';
+import Typography from 'material-ui/Typography';
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog';
 
 import MenuIcon from 'material-ui-icons/Menu';
 import HomeIcon from 'material-ui-icons/Home';
@@ -21,8 +31,11 @@ import CommentIcon from 'material-ui-icons/Comment';
 import CollectionsBookmarkIcon from 'material-ui-icons/CollectionsBookmark';
 import AccountBoxIcon from 'material-ui-icons/AccountBox';
 import SettingsIcon from 'material-ui-icons/Settings';
+import ChevronRightIcon from 'material-ui-icons/ChevronRight';
+import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 
-import { withStyles } from 'material-ui/styles';
+import withStyles from 'material-ui/styles/withStyles';
+import withTheme from 'material-ui/styles/withTheme';
 
 import Home from "./Home/Home";
 import LastActivity from "./Activity/LastActivity";
@@ -30,6 +43,7 @@ import Portfolio from "./Portfolio/Portfolio";
 import About from "./About/About";
 import Admin from "./Admin/Admin";
 import Whoops404 from "./Whoops404";
+import SocialMedia from "./Home/SocialMedia";
 
 const drawerWidth = 240;
 
@@ -42,12 +56,20 @@ const styles = theme => ({
     overflow: 'hidden',
     position: 'relative',
     display: 'flex',
-    width: '100%',
-    height: '100%',
 
   },
 
   appBar: {
+
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+
+  },
+
+  appBarMobile: {
 
     position: 'absolute',
     marginLeft: drawerWidth,
@@ -57,17 +79,50 @@ const styles = theme => ({
 
   },
 
-  navIconHide: {
+  appBarShift: {
 
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    },
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
 
   },
 
-  toolbar: theme.mixins.toolbar,
+  menuButton: {
+
+    marginLeft: 12,
+    marginRight: 36,
+
+  },
+
+  menuButtonMobile: {
+
+    marginLeft: -12,
+    marginRight: 20,
+
+  },
+
+  hide: {
+
+    display: 'none',
+
+  },
 
   drawerPaper: {
+
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+
+  },
+
+  drawerMobilePaper: {
 
     width: drawerWidth,
     [theme.breakpoints.up('md')]: {
@@ -75,6 +130,32 @@ const styles = theme => ({
     },
 
   },
+
+  drawerPaperClose: {
+
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    width: theme.spacing.unit * 7,
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing.unit * 9,
+    },
+
+  },
+
+  toolbar: {
+
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+
+  },
+
+  toolbarMobile: theme.mixins.toolbar,
 
   content: {
 
@@ -90,11 +171,24 @@ const styles = theme => ({
 
   },
 
+  selected: {
+
+    backgroundColor: '#303030',
+
+  },
+
+
 });
 
-const navLinkStyle = {
-  textDecoration: 'none'
-};
+function appBarTitle(props) {
+
+  let string = props.location.pathname;
+
+  return <Typography variant="title" color="inherit" noWrap>{
+    (string.substring(1)).charAt(0).toUpperCase() + string.slice(2)
+  }</Typography>
+
+}
 
 class App extends Component {
 
@@ -105,6 +199,9 @@ class App extends Component {
     this.state = {
 
       mobileOpen: false,
+      desktopOpen: false,
+
+      settingsOpen: false,
 
       openLuiz: false,
       openAntonio: false,
@@ -115,6 +212,11 @@ class App extends Component {
 
     };
 
+    this.handleDesktopDrawerOpen = this.handleDesktopDrawerOpen.bind(this);
+    this.handleDesktopDrawerClose = this.handleDesktopDrawerClose.bind(this);
+    this.handleMobileDrawerOpen = this.handleMobileDrawerOpen.bind(this);
+    this.handleMobileDrawerClose = this.handleMobileDrawerClose.bind(this);
+    this.handleMobileDrawerToggle = this.handleMobileDrawerToggle.bind(this);
     this.handleClickLuiz = this.handleClickLuiz.bind(this);
     this.handleCloseLuiz = this.handleCloseLuiz.bind(this);
     this.handleClickAntonio = this.handleClickAntonio.bind(this);
@@ -123,11 +225,38 @@ class App extends Component {
     this.handleCloseBueno = this.handleCloseBueno.bind(this);
     this.handleClickBarbosa = this.handleClickBarbosa.bind(this);
     this.handleCloseBarbosa = this.handleCloseBarbosa.bind(this);
-    this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
+    this.handleSettingsOpen = this.handleSettingsOpen.bind(this);
+    this.handleSettingsClose = this.handleSettingsClose.bind(this);
 
   }
 
-  handleDrawerToggle = () => {
+  componentDidMount() {
+
+    if(this.props.location.pathname !== '/') {
+
+      this.setState({ desktopOpen: true });
+
+    }
+
+  }
+
+  handleDesktopDrawerOpen = () => {
+    this.setState({ desktopOpen: true });
+  };
+
+  handleDesktopDrawerClose = () => {
+    this.setState({ desktopOpen: false });
+  };
+
+  handleMobileDrawerOpen = () => {
+    this.setState({ mobileOpen: true });
+  };
+
+  handleMobileDrawerClose = () => {
+    this.setState({ mobileOpen: false });
+  };
+
+  handleMobileDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
   };
 
@@ -163,70 +292,102 @@ class App extends Component {
     this.setState({ openBarbosa: false });
   };
 
+  handleSettingsOpen = () => {
+    this.handleMobileDrawerClose();
+    this.setState({ settingsOpen: true });
+  };
+
+  handleSettingsClose = () => {
+    this.setState({ settingsOpen: false });
+  };
+
   render() {
 
     const { classes, theme } = this.props;
-    const { vertical, horizontal, openLuiz, openAntonio, openBueno, openBarbosa } = this.state;
+
+    const {
+      vertical,
+      horizontal,
+      openLuiz,
+      openAntonio,
+      openBueno,
+      openBarbosa,
+    } = this.state;
+
+    const pathname = this.props.location.pathname;
+
+    const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
     const drawer = (
 
       <div>
 
-        <div className={classes.toolbar} />
-
         <Divider />
 
         <List component="nav">
 
-          <NavLink style={navLinkStyle} to="/">
-            <ListItem button>
+          <ListItem button
+                    component={NavLink}
+                    exact to="/"
+                    activeClassName={classes.selected}
+                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerClose() }}>
 
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
 
-              <ListItemText primary="Home" />
+            <ListItemText primary="Home" />
 
-            </ListItem>
-          </NavLink>
+          </ListItem>
 
-          <NavLink style={navLinkStyle} to="/activity">
-            <ListItem button>
+          <ListItem button
+                    component={NavLink}
+                    to="/activity"
+                    activeClassName={classes.selected}
+                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
 
-              <ListItemIcon>
-                <CommentIcon />
-              </ListItemIcon>
+            <ListItemIcon>
+              <CommentIcon />
+            </ListItemIcon>
 
-              <ListItemText primary="Activity" />
+            <ListItemText primary="Activity" />
 
-            </ListItem>
-          </NavLink>
+          </ListItem>
 
-          <NavLink style={navLinkStyle} to="/portfolio">
-            <ListItem button>
 
-              <ListItemIcon>
-                <CollectionsBookmarkIcon />
-              </ListItemIcon>
+          <ListItem button
+                    component={NavLink}
+                    to="/portfolio"
+                    activeClassName={classes.selected}
+                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
 
-              <ListItemText primary="Portfolio" />
+            <ListItemIcon>
+              <CollectionsBookmarkIcon />
+            </ListItemIcon>
 
-            </ListItem>
-          </NavLink>
+            <ListItemText primary="Portfolio" />
 
-          <NavLink style={navLinkStyle} to="/about">
-            <ListItem button>
+          </ListItem>
 
-              <ListItemIcon>
-                <AccountBoxIcon />
-              </ListItemIcon>
 
-              <ListItemText primary="About Me" />
 
-            </ListItem>
-          </NavLink>
+          <ListItem button
+                    component={NavLink}
+                    to="/about"
+                    activeClassName={classes.selected}
+                    onClick={() => { this.handleMobileDrawerClose(); this.handleDesktopDrawerOpen() }}>
 
-          <ListItem button>
+            <ListItemIcon>
+              <AccountBoxIcon />
+            </ListItemIcon>
+
+            <ListItemText primary="About Me" />
+
+          </ListItem>
+
+
+          <ListItem button
+                    onClick={this.handleSettingsOpen}>
 
             <ListItemIcon>
               <SettingsIcon />
@@ -286,67 +447,168 @@ class App extends Component {
 
     );
 
+    const appTitle = (pathname === '/') ? (
+
+      labbButtons
+
+    ) : (
+
+      appBarTitle(this.props)
+
+    );
+
     return (
 
       <div className={classes.root}>
 
-        <AppBar className={classes.appBar}>
-
-          <Toolbar>
-
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={this.handleDrawerToggle}
-              className={classes.navIconHide}
-            >
-
-              <MenuIcon />
-
-            </IconButton>
-
-            {labbButtons}
-
-          </Toolbar>
-
-        </AppBar>
-
         <Hidden mdUp>
 
-          <Drawer
-            variant="temporary"
+          <AppBar className={classes.appBarMobile}>
+
+            <Toolbar>
+
+              <IconButton
+                color="inherit"
+                aria-label="open mobile drawer"
+                onClick={this.handleMobileDrawerToggle}
+                className={classes.menuButtonMobile}
+              >
+
+                <MenuIcon />
+
+              </IconButton>
+
+              {appTitle}
+
+            </Toolbar>
+
+          </AppBar>
+
+          <SwipeableDrawer
+            disableBackdropTransition={!iOS}
+            disableDiscovery={iOS}
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={this.state.mobileOpen}
-            onClose={this.handleDrawerToggle}
+            onClose={this.handleMobileDrawerClose}
+            onOpen={this.handleMobileDrawerOpen}
             classes={{
-              paper: classes.drawerPaper,
+              paper: classes.drawerMobilePaper,
             }}
             ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
+              keepMounted: true,
             }}
           >
 
-            {drawer}
+            <div
+              tabIndex={0}
+              role="button"
+              onClick={this.handleMobileDrawerClose}
+              onKeyDown={this.handleMobileDrawerClose}
+            >
 
-          </Drawer>
+              <div className={classes.toolbarMobile} />
+
+              {drawer}
+
+            </div>
+
+          </SwipeableDrawer>
 
         </Hidden>
 
         <Hidden smDown implementation="css">
 
-          <Drawer
-            variant="permanent"
-            open
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-          >
+          <AppBar
+          position="absolute"
+          className={classNames(classes.appBar, this.state.desktopOpen && classes.appBarShift)}
+        >
 
-            {drawer}
+          <Toolbar disableGutters={!this.state.desktopOpen}>
 
-          </Drawer>
+            <IconButton
+              color="inherit"
+              aria-label="open desktop drawer"
+              onClick={this.handleDesktopDrawerOpen}
+              className={classNames(classes.menuButton, this.state.desktopOpen && classes.hide)}
+            >
+              <MenuIcon />
+            </IconButton>
+
+            {appTitle}
+
+          </Toolbar>
+
+        </AppBar>
+
+        <Drawer
+          variant="permanent"
+          classes={{
+            paper: classNames(classes.drawerPaper, !this.state.desktopOpen && classes.drawerPaperClose),
+          }}
+          open={this.state.desktopOpen}
+        >
+
+          <div className={classes.toolbar}>
+
+            <IconButton onClick={this.handleDesktopDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+
+          </div>
+
+          {drawer}
+
+        </Drawer>
 
         </Hidden>
+
+        <Dialog
+          fullScreen={false}
+          open={this.state.settingsOpen}
+          onClose={this.handleSettingsClose}
+          aria-labelledby="responsive-dialog-settings-title"
+        >
+
+          <DialogTitle id="responsive-dialog-settings-title">{"Choose Language"}</DialogTitle>
+
+          <DialogContent>
+
+            <DialogContentText>
+              Let Google help apps determine location. This means sending anonymous location data to
+              Google, even when no apps are running.
+            </DialogContentText>
+
+          </DialogContent>
+
+          <DialogActions>
+
+            <Button onClick={this.handleSettingsClose} color="secondary">
+              Disagree
+            </Button>
+
+            <Button onClick={this.handleSettingsClose} color="secondary" autoFocus>
+              Agree
+            </Button>
+
+          </DialogActions>
+
+        </Dialog>
+
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+
+          <Switch>
+            <Route exact={true} path="/" component={Home} />
+            <Route path="/activity" component={LastActivity} />
+            <Route path="/portfolio" component={Portfolio} />
+            <Route path="/about" component={About} />
+            <Route path="/admin" component={Admin} />
+            <Route component={Whoops404} />
+          </Switch>
+
+          <SocialMedia />
+
+        </main>
 
         <Snackbar
           anchorOrigin={{ vertical, horizontal }}
@@ -396,20 +658,6 @@ class App extends Component {
           className={classes.snackbar}
         />
 
-
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-
-          <Switch>
-            <Route exact={true} path="/" component={Home} />
-            <Route path="/activity" component={LastActivity} />
-            <Route path="/portfolio" component={Portfolio} />
-            <Route path="/about" component={About} />
-            <Route path="/admin" component={Admin} />
-            <Route component={Whoops404} />
-          </Switch>
-        </main>
-
       </div>
 
     );
@@ -425,4 +673,10 @@ App.propTypes = {
 
 };
 
-export default withStyles(styles, { withTheme: true })(App);
+export default compose(
+
+  withStyles(styles),
+
+  withTheme(),
+
+)(App);

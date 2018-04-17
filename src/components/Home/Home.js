@@ -4,7 +4,11 @@ import Typography from 'material-ui/Typography';
 
 const Home = () => (
 
-  <Typography noWrap>{'Home'}</Typography>
+  <div>
+
+    <Typography noWrap>{'Home'}</Typography>
+
+  </div>
 
 );
 
