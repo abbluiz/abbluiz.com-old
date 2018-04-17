@@ -4,7 +4,7 @@ import Typography from 'material-ui/Typography';
 
 const About = () => (
 
-  <Typography noWrap>{'About'}</Typography>
+  <Typography noWrap>{'SocialMedia'}</Typography>
 
 );
 
