@@ -39,13 +39,13 @@ import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 import withStyles from 'material-ui/styles/withStyles';
 import withTheme from 'material-ui/styles/withTheme';
 
-import Home from "./Home/Home";
-import LastActivity from "./Activity/LastActivity";
-import Portfolio from "./Portfolio/Portfolio";
-import About from "./About/About";
-import Admin from "./Admin/Admin";
-import Whoops404 from "./Whoops404";
-import SocialMedia from "./Home/SocialMedia";
+import Home from "../Home/Home";
+import Activity from "../Activity/Activity";
+import Portfolio from "../Portfolio/Portfolio";
+import About from "../About/About";
+import Admin from "../Admin/Admin";
+import Whoops404 from "../Whoops404/Whoops404";
+import SocialMedia from "../SocialMedia/SocialMedia";
 
 const drawerWidth = 240;
 
@@ -678,7 +678,7 @@ class App extends Component {
 
           <Switch>
             <Route exact={true} path="/" component={Home} />
-            <Route path="/activity" component={LastActivity} />
+            <Route path="/activity" component={Activity} />
             <Route path="/portfolio" component={Portfolio} />
             <Route path="/about" component={About} />
             <Route path="/admin" component={Admin} />

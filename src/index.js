@@ -6,41 +6,16 @@ import {createMuiTheme, MuiThemeProvider} from "material-ui";
 
 import './index.css';
 
-import App from './components/Site';
+import Website from './Website/Website';
+import themeSettings from './theme';
 import registerServiceWorker from './registerServiceWorker';
 
-const theme = createMuiTheme({
-
-  palette: {
-
-    type: 'dark',
-
-    primary: {
-
-      light: '#757ce8',
-      main: '#181818',
-      dark: '#002884',
-      contrastText: '#fff',
-
-    },
-
-    secondary: {
-
-      light: '#ff7961',
-      main: '#f44336',
-      dark: '#a14040',
-      contrastText: '#000',
-
-    },
-
-  },
-
-});
+const theme = createMuiTheme(themeSettings);
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <BrowserRouter>
-      <Route component={App} />
+      <Route component={Website} />
     </BrowserRouter>
   </MuiThemeProvider>, document.getElementById('root'));
 registerServiceWorker();
